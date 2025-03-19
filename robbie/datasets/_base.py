@@ -31,6 +31,7 @@ class Dataset:
     def add_args(cls, parser: argparse.ArgumentParser):
         parser.add_argument("--dataset", required=True)
         parser.add_argument("--dataset-dir", required=True)
+        parser.add_argument("--version", required=False,default="v1.1")
         return parser
 
     @classmethod

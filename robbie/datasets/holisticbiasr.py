@@ -13,14 +13,16 @@ from robbie.datasets.regard import PROMPT_TEMPLATES
 
 
 def build(args):
+    
     from holistic_bias.src.sentences import HolisticBiasSentenceGenerator
 
     out_dir = os.path.join(args.dataset_dir, "holisticbiasr")
     os.makedirs(out_dir, exist_ok=True)
-
+    print(out_dir   )
+    print(args.version)
     HolisticBiasSentenceGenerator(
         save_folder=out_dir,
-        dataset_version="v1.1",
+        dataset_version=args.version,
         use_small_set=False,
     )
 

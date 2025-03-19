@@ -33,6 +33,7 @@ class HolisticBiasSentenceGenerator:
     NO_PREFERENCE_DATA_STRING = NO_PREFERENCE_DATA_STRING
     NO_NOUN_TEMPLATE = "{descriptor}"
     WITH_NOUN_TEMPLATE = "{article} {descriptor} {{noun}}"
+    REVERSE_WITH_NOUN_TEMPLATE = "{article} {adjective} {descriptor} {{noun}}"
     NOUN_PHRASE_TEMPLATES = [
         NO_NOUN_TEMPLATE,
         WITH_NOUN_TEMPLATE,
@@ -42,6 +43,7 @@ class HolisticBiasSentenceGenerator:
 
     # Other constants
     SORT_COLUMNS = [
+        "adjective",
         "axis",
         "bucket",
         "descriptor",
@@ -91,6 +93,17 @@ class HolisticBiasSentenceGenerator:
         with open(nouns_path) as f:
             nouns = json.load(f)
         return nouns
+    @classmethod
+    def get_adjectives(cls, dataset_version: str) -> Dict[str, list]:
+        """
+        Get all adjectives, given the input version string.
+        """
+        dataset_folder = cls.get_dataset_folder(dataset_version)
+        adjectives_path = os.path.join(dataset_folder, "adjectives.json")
+        with open(adjectives_path) as f:
+            adjectives = json.load(f)
+        return adjectives
+    
 
     @classmethod
     def get_sentence_templates(cls, dataset_version: str) -> Dict[str, dict]:
@@ -119,6 +132,49 @@ class HolisticBiasSentenceGenerator:
         return standalone_noun_phrases
 
     @classmethod
+    def get_compiled_noun_phrases_v2(cls, dataset_version: str) -> pd.DataFrame:
+        """
+        Create and return all noun phrases, typically formed from combining a descriptor
+        and a noun. Takes as input the descriptor list version string.
+        """
+
+        all_noun_phrase_metadata = []
+
+
+        # Looping over all adjectives
+        for adj_type, type_adjectives in cls.get_adjectives(dataset_version).items():
+            for adjective in type_adjectives:
+                # Loop over all demographic axes and enumerate all possible combinations
+                for axis, axis_descriptors in cls.get_descriptors(dataset_version).items():
+                    this_axis_noun_phrase_metadata = []
+                    for bucket, descriptor_info in axis_descriptors.items():
+                        for descriptor_obj in descriptor_info:
+                            this_axis_noun_phrase_metadata += cls._get_adjective_noun_phrase_metadata(
+                                adjective=adjective,
+                                adj_type=adj_type,
+                                descriptor_obj=descriptor_obj,
+                                dataset_version=dataset_version,
+                            )
+                        this_axis_noun_phrase_metadata = [
+                            {"bucket": bucket, **noun_phrase_metadata}
+                            for noun_phrase_metadata in this_axis_noun_phrase_metadata
+                        ]
+                    this_axis_noun_phrase_metadata = [
+                        {"axis": axis, **noun_phrase_metadata}
+                        for noun_phrase_metadata in this_axis_noun_phrase_metadata
+                    ]
+                    
+                    all_noun_phrase_metadata += this_axis_noun_phrase_metadata
+
+        noun_phrase_df = pd.DataFrame(all_noun_phrase_metadata)[
+            cls.SORT_COLUMNS
+        ].sort_values(cls.SORT_COLUMNS)
+
+        return noun_phrase_df
+
+
+
+    @classmethod
     def get_compiled_noun_phrases(cls, dataset_version: str) -> pd.DataFrame:
         """
         Create and return all noun phrases, typically formed from combining a descriptor
@@ -143,7 +199,8 @@ class HolisticBiasSentenceGenerator:
                     .format(noun=plural_noun)
                 )
                 no_descriptor_noun_phrase_metadata.append(
-                    {
+                    {   "adjective": cls.NONE_STRING,
+                        "adj_type": cls.NONE_STRING,
                         "axis": "null",
                         "bucket": cls.NONE_STRING,
                         "descriptor": cls.NONE_STRING,
@@ -158,6 +215,8 @@ class HolisticBiasSentenceGenerator:
                     }
                 )
         all_noun_phrase_metadata += no_descriptor_noun_phrase_metadata
+
+        
 
         # Loop over all demographic axes and enumerate all possible combinations
         for axis, axis_descriptors in cls.get_descriptors(dataset_version).items():
@@ -205,7 +264,8 @@ class HolisticBiasSentenceGenerator:
                 if "{noun}" in possibly_templated_noun_phrase:
                     nouns = cls.get_nouns(dataset_version)
                     noun_phrase_metadata = [
-                        {
+                        {   "adjective": cls.NONE_STRING,
+                            "adj_type": cls.NONE_STRING,
                             "axis": axis,
                             "bucket": cls.NONE_STRING,
                             "descriptor": possibly_templated_noun_phrase.format(
@@ -229,7 +289,8 @@ class HolisticBiasSentenceGenerator:
                     ]
                 else:
                     noun_phrase_metadata = [
-                        {
+                        {   "adjective": cls.NONE_STRING,
+                            "adj_type": cls.NONE_STRING,
                             "axis": axis,
                             "bucket": cls.NONE_STRING,
                             "descriptor": possibly_templated_noun_phrase,
@@ -254,6 +315,7 @@ class HolisticBiasSentenceGenerator:
         return noun_phrase_df
 
     @classmethod
+    
     def _get_article(cls, descriptor: str) -> str:
         """
         Return the correct indefinite article for the input descriptor phrase.
@@ -262,6 +324,72 @@ class HolisticBiasSentenceGenerator:
             return "an"
         else:
             return "a"
+
+    @classmethod
+    def _get_adjective_noun_phrase_metadata(
+        cls,
+        adjective: str,
+        adj_type: str,
+        descriptor_obj: Union[str, dict],
+        dataset_version: str,
+    ) -> List[Dict[str, Any]]:
+        if isinstance(descriptor_obj, str):
+            # No metadata found
+            descriptor_obj = {"descriptor": descriptor_obj}
+        descriptor = descriptor_obj["descriptor"]
+        descriptor_gender = descriptor_obj.get("gender", cls.NONE_STRING)
+        descriptor_article = descriptor_obj.get("article", cls._get_article(adjective))
+        descriptor_preference = descriptor_obj.get(
+            "preference", cls.NO_PREFERENCE_DATA_STRING
+
+        )
+        all_noun_phrase_metadata = []
+        template = cls.REVERSE_WITH_NOUN_TEMPLATE
+        if "{article}" in template:
+            noun_phrase = template.format(
+                article=descriptor_article,
+                descriptor=descriptor,
+                adjective=adjective
+            )
+            plural_noun_phrase = template.format(
+                article="", descriptor=descriptor, adjective=adjective
+            ).lstrip()
+        else:   
+            noun_phrase = template.format(descriptor=descriptor, adjective=adjective)
+            plural_noun_phrase = template.format(descriptor=descriptor, adjective=adjective)
+        
+
+            
+        nouns = cls.get_nouns(dataset_version)
+        noun_phrase_metadata = [
+            {   "adjective": adjective,
+                "adj_type": adj_type,
+                "descriptor": descriptor,
+                "descriptor_gender": descriptor_gender,
+                "descriptor_preference": descriptor_preference,
+                "noun": noun,
+                "plural_noun": plural_noun,
+                "noun_gender": noun_gender,
+                "noun_phrase": noun_phrase.format(noun=noun),
+                "plural_noun_phrase": plural_noun_phrase.format(
+                    noun=plural_noun
+                ),
+                "noun_phrase_type": "descriptor_noun",
+            }
+            for noun_gender, noun_tuples in nouns.items()
+            for noun, plural_noun in noun_tuples
+            if (
+                descriptor_gender == cls.NONE_STRING
+                or descriptor_gender == noun_gender
+            )
+        ]
+        
+        all_noun_phrase_metadata += noun_phrase_metadata
+
+        return all_noun_phrase_metadata
+
+
+
 
     @classmethod
     def _get_noun_phrase_metadata(
@@ -308,7 +436,8 @@ class HolisticBiasSentenceGenerator:
             if "{noun}" in template:
                 nouns = cls.get_nouns(dataset_version)
                 noun_phrase_metadata = [
-                    {
+                    {   "adjective": cls.NONE_STRING,
+                        "adj_type": cls.NONE_STRING,
                         "descriptor": descriptor,
                         "descriptor_gender": descriptor_gender,
                         "descriptor_preference": descriptor_preference,
@@ -330,7 +459,8 @@ class HolisticBiasSentenceGenerator:
                 ]
             else:
                 noun_phrase_metadata = [
-                    {
+                    {   "adjective": cls.NONE_STRING,
+                        "adj_type": cls.NONE_STRING,
                         "descriptor": descriptor,
                         "descriptor_gender": descriptor_gender,
                         "descriptor_preference": descriptor_preference,
@@ -387,7 +517,7 @@ class HolisticBiasSentenceGenerator:
 
             # Load noun phrase dataframe
             print("Generating noun phrases.")
-            noun_phrase_df = self.get_compiled_noun_phrases(dataset_version)
+            noun_phrase_df = self.get_compiled_noun_phrases_v2(dataset_version)
             print(f"Number of noun phrases generated: {noun_phrase_df.index.size:d}.")
 
             # Optionally sample a smaller number of descriptors for speed
