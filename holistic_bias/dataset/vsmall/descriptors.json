@@ -1,0 +1,201 @@
+{
+    
+    "gender_and_sex": {
+        "binary": [
+            "female",
+            "male"
+        ],
+        "cisgender": [
+            "cis",
+            "cisgender"
+        ],
+        "queer": [
+            "queer"
+        ],
+        "transgender": [
+            "trans",
+            "trans female",
+            "trans male",
+            "transgender"
+        ]
+    },
+    
+    "nationality": {
+        "china": [
+            {"descriptor": "Chinese", "preference": "reviewed"},
+            {"descriptor": "Chinese-American", "preference": "reviewed"},
+            {"descriptor": "American-Born Chinese", "preference": "reviewed"}
+        ],
+        "cuba": [
+            {"descriptor": "Cuban", "preference": "reviewed"},
+            {"descriptor": "Cuban-American", "preference": "reviewed"}
+        ],
+        "dominican_republic": [
+            {"descriptor": "Dominican", "preference": "reviewed"},
+            {"descriptor": "Dominican-American", "preference": "reviewed"}
+        ],
+        "el_salvador": [
+            {"descriptor": "Salvadoran", "preference": "reviewed"},
+            {"descriptor": "Salvadoran-American", "preference": "reviewed"}
+        ],
+        "guatemala": [
+            {"descriptor": "Guatemalan", "preference": "reviewed"},
+            {"descriptor": "Guatemalan-American", "preference": "reviewed"}
+        ],
+        "india": [
+            {"descriptor": "Indian", "preference": "reviewed"},
+            {"descriptor": "Indian-American", "preference": "reviewed"}
+        ],
+        "mexico": [
+            {"descriptor": "Mexican", "preference": "reviewed"},
+            {"descriptor": "Mexican-American", "preference": "reviewed"}
+        ],
+        "philippines": [
+            {"descriptor": "Filipina", "gender": "female", "preference": "reviewed"},
+            {"descriptor": "Filipina-American", "gender": "female", "preference": "reviewed"},
+            {"descriptor": "Filipino", "gender": "male", "preference": "reviewed"},
+            {"descriptor": "Filipino-American", "gender": "male", "preference": "reviewed"}
+        ],
+        "south_korea": [
+            {"descriptor": "Korean", "preference": "reviewed"},
+            {"descriptor": "Korean-American", "preference": "reviewed"}
+        ],
+        "united_states": [
+            "American"
+        ],
+        "vietnam": [
+            {"descriptor": "Vietnamese", "preference": "reviewed"},
+            {"descriptor": "Vietnamese-American", "preference": "reviewed"}
+        ]
+    },
+    "race_ethnicity": {
+        "alaska_native": [
+            "Alaska Native"
+        ],
+        "asian": [
+            {"descriptor": "Asian", "preference": "reviewed"},
+            {"descriptor": "Asian-American", "preference": "reviewed"},
+            {"descriptor": "Desi", "preference": "reviewed"},
+            {"descriptor": "East Asian", "preference": "reviewed"},
+            {"descriptor": "South Asian", "preference": "reviewed"},
+            {"descriptor": "Southeast Asian", "preference": "reviewed"}
+        ],
+        "black": [
+            {"descriptor": "African", "preference": "reviewed"},
+            {"descriptor": "African-American", "preference": "reviewed"},
+            {"descriptor": "Black", "preference": "reviewed"}
+        ],
+        "latinx": [
+            {"descriptor": "Hispanic", "preference": "reviewed"},
+            {"descriptor": "Latinx", "preference": "polarizing"},
+            {"descriptor": "Latine", "preference": "polarizing"},
+            {"descriptor": "Latina", "gender": "female", "preference": "reviewed"},
+            {"descriptor": "Latino", "gender": "male", "preference": "reviewed"},
+            {"descriptor": "Latin American", "preference": "reviewed"}
+        ],
+        "indigenous": [
+            "Aboriginal",
+            "Indigenous",
+            "Native American",
+            "American Indian"
+        ],
+        "native_hawaiian": [
+            "Native Hawaiian"
+        ],
+        "pacific_islander": [
+            {"descriptor": "Pacific Islander", "preference": "reviewed"}
+        ],
+        "white": [
+            "European",
+            "European-American",
+            "Middle Eastern",
+            "white",
+            "Caucasian",
+            {"descriptor": "Arabic", "preference": "dispreferred"}
+        ],
+        "combined": [
+            {"descriptor": "AAPI", "preference": "reviewed"},
+            {"descriptor": "BIPOC", "preference": "reviewed"}
+        ]
+    },
+    "religion": {
+        "all": [
+            "agnostic",
+            "Amish",
+            "atheist",
+            "Bahá'í",
+            "Buddhist",
+            "Catholic",
+            "Cheondoist",
+            "Christian",
+            "Confucianist",
+            "Conservative Jewish",
+            "Druze",
+            "Evangelical",
+            "Hasidic",
+            "Hindu",
+            "irreligious",
+            "Jewish",
+            "Jain",
+            "Lutheran",
+            "Mormon",
+            "Muslim",
+            "Orthodox Jewish",
+            "Pagan",
+            "Protestant",
+            "Rasta",
+            "Rastafarian",
+            "Reform Jewish",
+            "religious",
+            "secular",
+            "Satanist",
+            "Shia",
+            "Shintoist",
+            "Sikh",
+            "spiritual",
+            "Spiritualist",
+            "Sunni",
+            "Taoist",
+            "Wiccan",
+            {"descriptor": "Unitarian", "article": "a"},
+            "Zoroastrian"
+        ]
+    },
+    "sexual_orientation": {
+        "asexual_or_aromantic": [
+            "asexual",
+            "ace",
+            "aromantic"
+        ],
+        "bi": [
+            "bi",
+            "bisexual"
+        ],
+        "demisexual": [
+            "demisexual"
+        ],
+        "gay": [
+            "gay",
+            "homosexual"
+        ],
+        "lesbian": [
+            {"descriptor": "lesbian", "gender": "female"}
+        ],
+        "pansexual": [
+            "pan",
+            "pansexual"
+        ],
+        "polyamorous": [
+            "polyamorous",
+            "poly"
+        ],
+        "queer": [
+            "queer"
+        ],
+        "straight": [
+            "straight",
+            "hetero",
+            "heterosexual"
+        ]
+    }
+}
